@@ -56,4 +56,36 @@ def load_cab_vector(root):
     return vocabulary_vectors, word_list
 
 
-load_cab_vector()
+def process_sentence(flag):
+    '''
+    将单词组成的句子映射成单词编号向量，即句子编码
+    '''
+    word_list = np.load('npys/word_list')
+    data = load_data(path, flag)
+    sentence_code = []
+    for d in data:
+        tmp = []
+        vec = d[0]
+        for v in vec:  # 查每个单词在word_list中的索引，若存在则加入的tmp中，若不存在则按索引399999赋值
+            try:
+                index = word_list.index(v)
+            except ValueError:  # 没找到
+                index = 399999
+            finally:
+                tmp.append(index)
+        # 如果句子长度小于250则末尾补0，若大于250则大于部分去掉
+        if len(tmp) < 250:
+            for k in range(len(tmp), 250):
+                tmp.append(0)
+        else:
+            tmp = tmp[:250]
+        sentence_code.append(tmp)
+    # 转矩阵保存二进制进硬盘
+    sentence_code = np.array(sentence_code)
+    if flag == 'train':
+        np.save("sentence_code_1", sentence_code)
+    else:
+        np.save("sentence_code_1", sentence_code)
+
+
+load_cab_vector('npys/word_list', )
